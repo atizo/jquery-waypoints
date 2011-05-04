@@ -248,10 +248,21 @@ Support:
 		One scroll move may cross several waypoints.  If the continuous setting is
 		true, every waypoint event should fire.  If false, only the last one.
 		*/
+		
 		if ($[wps].settings.continuous) {
+			var lastHitPoint = null;
+			var lastIsDown = null;
 			$.each(isDown ? pointsHit : pointsHit.reverse(), function(i, point) {
-				triggerWaypoint(point, [isDown ? 'down' : 'up']);
+				if(point.options.continuous){
+					triggerWaypoint(point, [isDown ? 'down' : 'up']);
+				}else{
+					lastHitPoint = point;
+					lastIsDown = isDown;
+				}
 			});
+			if(lastHitPoint){
+				triggerWaypoint(lastHitPoint, [lastIsDown ? 'down' : 'up']);				
+			}
 		}
 		else {
 			triggerWaypoint(pointsHit[isDown ? pointsHit.length - 1 : 0],
